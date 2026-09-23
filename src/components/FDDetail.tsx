@@ -174,17 +174,17 @@ export default function FDDetail({ fd, currency, onBack, onInterestUpdate }: Pro
         {/* Interest Ledger */}
         <div className="fd-card" style={{ marginTop: 16 }}>
           <h3 className="fd-section-title">Interest Inflow Ledger</h3>
-          <form className="inline-add-form" onSubmit={handleAdd} style={{ marginBottom: 16 }}>
+          <form style={{ display: "flex", gap: "8px", marginBottom: "20px", alignItems: "center" }} onSubmit={handleAdd}>
             <input
               type="month"
-              className="inline-input"
+              style={{ flex: 1, padding: "12px 14px", borderRadius: "12px", border: "1px solid var(--border)", background: "rgba(0,0,0,0.2)", color: "var(--text)", outline: "none", fontSize: "14px" }}
               value={month}
               onChange={(e) => setMonth(e.target.value)}
               required
             />
             <input
               type="number"
-              className="inline-input"
+              style={{ flex: 1, padding: "12px 14px", borderRadius: "12px", border: "1px solid var(--border)", background: "rgba(0,0,0,0.2)", color: "var(--text)", outline: "none", fontSize: "14px" }}
               placeholder="Amount"
               step="0.01"
               min="0.01"
@@ -192,27 +192,28 @@ export default function FDDetail({ fd, currency, onBack, onInterestUpdate }: Pro
               onChange={(e) => setAmount(e.target.value)}
               required
             />
-            <button type="submit" className="inline-add-btn">
-              <Plus size={18} />
+            <button type="submit" style={{ padding: "12px", borderRadius: "12px", background: "var(--primary)", color: "white", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s" }}>
+              <Plus size={20} />
             </button>
           </form>
 
           {entries.length === 0 ? (
-            <p className="empty-text" style={{ textAlign: "center", opacity: 0.6 }}>No interest logged yet.</p>
+            <div style={{ textAlign: "center", padding: "30px 10px", opacity: 0.6, background: "rgba(0,0,0,0.15)", borderRadius: "16px", border: "1px dashed rgba(255,255,255,0.1)" }}>
+              <Calendar size={28} style={{ marginBottom: "12px", opacity: 0.5 }} />
+              <p style={{ margin: 0, fontSize: "14px" }}>No interest logged yet.</p>
+            </div>
           ) : (
-            <ul className="entry-list">
+            <ul className="rd-month-list" style={{ gap: "10px", display: "flex", flexDirection: "column" }}>
               {entries.map(e => (
-                <li key={e.id} className="entry-item" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid var(--border)" }}>
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    <span style={{ fontWeight: 600 }}>{formatMonthLabel(e.month)}</span>
-                    <span style={{ fontSize: 12, opacity: 0.7 }}>Added on {new Date(e.createdAt).toLocaleDateString()}</span>
+                <li key={e.id} className="rd-month-item paid" style={{ margin: 0, border: "1px solid rgba(16, 185, 129, 0.2)", background: "rgba(16, 185, 129, 0.05)" }}>
+                  <div className="rd-month-left">
+                    <span className="rd-month-label" style={{ fontSize: "15px", fontWeight: 600 }}>{formatMonthLabel(e.month)}</span>
+                    <span className="rd-month-amount" style={{ color: "var(--success)", fontSize: "14px", marginTop: "4px" }}>+{formatAmount(e.amount, currency)}</span>
+                    <span style={{ fontSize: "11px", opacity: 0.5, marginTop: "6px", display: "block" }}>Logged on {new Date(e.createdAt).toLocaleDateString()}</span>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <span style={{ fontWeight: 600, color: "var(--success)" }}>+{formatAmount(e.amount, currency)}</span>
-                    <button className="icon-btn text-danger" onClick={() => handleDelete(e.id)}>
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
+                  <button className="icon-btn text-danger" style={{ background: "rgba(239, 68, 68, 0.15)", padding: "10px", borderRadius: "50%", display: "flex" }} onClick={() => handleDelete(e.id)}>
+                    <Trash2 size={16} />
+                  </button>
                 </li>
               ))}
             </ul>
