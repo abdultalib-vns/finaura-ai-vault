@@ -10,6 +10,7 @@ export interface FinanceItem {
   creditLimit?: number;
   // FD / RD
   interestRate?: number;
+  interestInflow?: number;
   startDate?: string;
   maturityDate?: string;
   // RD specific

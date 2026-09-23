@@ -408,7 +408,7 @@ function CandleStickChart3D({
 
   const candles = React.useMemo(() => {
     if (viewMode === "assets") {
-      const fdItem = items.filter((i) => i.type === "fd").reduce((s, i) => s + i.balance, 0);
+      const fdItem = items.filter((i) => i.type === "fd").reduce((s, i) => s + i.balance + (i.interestInflow || 0), 0);
       const rdItem = items.filter((i) => i.type === "rd").reduce((s, i) => s + i.balance, 0);
       const mfItem = items.filter((i) => i.type === "mf").reduce((s, i) => s + i.balance, 0);
 
@@ -1050,7 +1050,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
   // ── Summary stats (all-time) ──────────────────────────────────
   const unpaidTotal  = expenses.filter(e => e.status === "unpaid" || e.status === "bill_generated_unpaid").reduce((s, e) => s + e.amount, 0);
   const bankTotal    = items.filter(i => i.type === "bank").reduce((s, i) => s + i.balance, 0);
-  const fdTotal      = items.filter(i => i.type === "fd").reduce((s, i) => s + i.balance, 0);
+  const fdTotal      = items.filter(i => i.type === "fd").reduce((s, i) => s + i.balance + (i.interestInflow || 0), 0);
   const rdTotal      = items.filter(i => i.type === "rd").reduce((s, i) => s + i.balance, 0);
   const mfTotal      = items.filter(i => i.type === "mf").reduce((s, i) => s + i.balance, 0);
   const cardCount    = items.filter(i => i.type === "card" || i.type === "paylater").length;

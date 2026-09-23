@@ -37,7 +37,7 @@ export default function ItemCard({ item, masterKey, currency, onDelete, onEdit }
   const hasSecret = !!item.encryptedSecret && decryptData(item.encryptedSecret, masterKey) !== "";
 
   const balLabel: Record<FinanceItem["type"], string> = {
-    bank: "Balance", card: "Outstanding", fd: "Principal",
+    bank: "Balance", card: "Outstanding", fd: "Total Value",
     rd: "Deposited", mf: "Current Value", paylater: "Outstanding", other: "Balance",
   };
 
@@ -130,13 +130,16 @@ export default function ItemCard({ item, masterKey, currency, onDelete, onEdit }
                 <div>
                   <span className="item-balance-label">{balLabel[item.type]}</span>
                   <span className="item-balance">
-                    {showSensitive ? formatAmount(item.balance, currency) : "••••••"}
+                    {showSensitive ? formatAmount(item.type === "fd" ? item.balance + (item.interestInflow || 0) : item.balance, currency) : "••••••"}
                   </span>
                   {item.creditLimit !== undefined && showSensitive && (
                     <span className="item-limit">Limit: {formatAmount(item.creditLimit, currency)}</span>
                   )}
                   {item.type === "mf" && item.investedAmount !== undefined && showSensitive && (
                     <span className="item-limit">Invested: {formatAmount(item.investedAmount, currency)}</span>
+                  )}
+                  {item.type === "fd" && item.interestInflow !== undefined && showSensitive && (
+                    <span className="item-limit">Principal: {formatAmount(item.balance, currency)} <span style={{color: "var(--success)"}}>| Earned: +{formatAmount(item.interestInflow, currency)}</span></span>
                   )}
                 </div>
                 <button
