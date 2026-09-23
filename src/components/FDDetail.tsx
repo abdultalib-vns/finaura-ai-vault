@@ -120,8 +120,8 @@ export default function FDDetail({ fd, currency, onBack, onInterestUpdate }: Pro
         </div>
         <div className="stat-divider" />
         <div className="stat-item">
-          <span className="stat-value" style={{ color: "#f59e0b" }}>{formatAmount(currentTotal, currency)}</span>
-          <span className="stat-label">Total Value</span>
+          <span className="stat-value cashback-val" style={{ color: "var(--success)" }}>+{formatAmount(actualEarnedInterest, currency)}</span>
+          <span className="stat-label">Actual Earned</span>
         </div>
       </div>
 
@@ -172,14 +172,14 @@ export default function FDDetail({ fd, currency, onBack, onInterestUpdate }: Pro
           <form style={{ display: "flex", gap: "8px", marginBottom: "20px", alignItems: "center" }} onSubmit={handleAdd}>
             <input
               type="month"
-              style={{ flex: 1, padding: "12px 14px", borderRadius: "12px", border: "1px solid var(--border)", background: "rgba(0,0,0,0.2)", color: "var(--text)", outline: "none", fontSize: "14px" }}
+              style={{ flex: 1, minWidth: 0, padding: "12px 14px", borderRadius: "12px", border: "1px solid var(--border)", background: "rgba(0,0,0,0.2)", color: "var(--text)", outline: "none", fontSize: "14px", boxSizing: "border-box" }}
               value={month}
               onChange={(e) => setMonth(e.target.value)}
               required
             />
             <input
               type="number"
-              style={{ flex: 1, padding: "12px 14px", borderRadius: "12px", border: "1px solid var(--border)", background: "rgba(0,0,0,0.2)", color: "var(--text)", outline: "none", fontSize: "14px" }}
+              style={{ flex: 1, minWidth: 0, padding: "12px 14px", borderRadius: "12px", border: "1px solid var(--border)", background: "rgba(0,0,0,0.2)", color: "var(--text)", outline: "none", fontSize: "14px", boxSizing: "border-box" }}
               placeholder="Amount"
               step="0.01"
               min="0.01"
@@ -198,9 +198,9 @@ export default function FDDetail({ fd, currency, onBack, onInterestUpdate }: Pro
               <p style={{ margin: 0, fontSize: "14px" }}>No interest logged yet.</p>
             </div>
           ) : (
-            <ul className="rd-month-list" style={{ gap: "10px", display: "flex", flexDirection: "column" }}>
+            <ul className="rd-month-list" style={{ gap: "10px", display: "flex", flexDirection: "column", padding: 0, margin: 0, listStyle: "none" }}>
               {entries.map(e => (
-                <li key={e.id} className="rd-month-item paid" style={{ margin: 0, border: "1px solid rgba(16, 185, 129, 0.2)", background: "rgba(16, 185, 129, 0.05)" }}>
+                <li key={e.id} className="rd-month-item paid" style={{ margin: 0, border: "1px solid rgba(16, 185, 129, 0.2)", background: "rgba(16, 185, 129, 0.05)", boxSizing: "border-box", width: "100%" }}>
                   <div className="rd-month-left">
                     <span className="rd-month-label" style={{ fontSize: "15px", fontWeight: 600 }}>{formatMonthLabel(e.month)}</span>
                     <span className="rd-month-amount" style={{ color: "var(--success)", fontSize: "14px", marginTop: "4px" }}>+{formatAmount(e.amount, currency)}</span>
