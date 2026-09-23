@@ -913,7 +913,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
 
       const diffDays = Math.ceil((dueMs - todayMs) / (1000 * 60 * 60 * 24));
       
-      if (diffDays <= 3) {
+      if (diffDays <= 7) {
         const expenseIdsStr = `emi_${emi.id}`;
         const isSuppressed = isDueReminderSuppressed(loan.id, dueDateStr, expenseIdsStr);
         let cardName = loan.name;
