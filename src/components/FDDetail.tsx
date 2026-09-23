@@ -120,11 +120,6 @@ export default function FDDetail({ fd, currency, onBack, onInterestUpdate }: Pro
         </div>
         <div className="stat-divider" />
         <div className="stat-item">
-          <span className="stat-value cashback-val" style={{ color: "var(--success)" }}>+{formatAmount(actualEarnedInterest, currency)}</span>
-          <span className="stat-label">Actual Earned</span>
-        </div>
-        <div className="stat-divider" />
-        <div className="stat-item">
           <span className="stat-value" style={{ color: "#f59e0b" }}>{formatAmount(currentTotal, currency)}</span>
           <span className="stat-label">Total Value</span>
         </div>
