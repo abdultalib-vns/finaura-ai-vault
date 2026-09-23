@@ -45,6 +45,15 @@ export default function Banks({ masterKey, currency, items, onItemsChange, onRel
     }
   }
 
+  function handleFDInterestUpdate(id: string, totalInterest: number) {
+    const updated = items.map((i) => i.id === id ? { ...i, interestInflow: totalInterest } : i);
+    saveItems(updated);
+    onItemsChange(updated);
+    if (detail && detail.item.id === id) {
+      setDetail({ ...detail, item: { ...detail.item, interestInflow: totalInterest } });
+    }
+  }
+
   function handleAddItem(item: FinanceItem) {
     const updated = [...items, item];
     saveItems(updated);
@@ -69,7 +78,7 @@ export default function Banks({ masterKey, currency, items, onItemsChange, onRel
     return <RDDetail rd={detail.item} currency={currency} onBack={() => setDetail(null)} onBalanceUpdate={handleBalanceUpdate} />;
   }
   if (detail?.kind === "fd") {
-    return <FDDetail fd={detail.item} currency={currency} onBack={() => setDetail(null)} />;
+    return <FDDetail fd={detail.item} currency={currency} onBack={() => setDetail(null)} onInterestUpdate={handleFDInterestUpdate} />;
   }
 
   return (

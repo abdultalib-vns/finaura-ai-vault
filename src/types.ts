@@ -105,6 +105,14 @@ export interface RDInstallment {
   paidDate?: string;
 }
 
+export interface FDInterestEntry {
+  id: string;
+  fdId: string;
+  month: string;
+  amount: number;
+  createdAt: number;
+}
+
 export interface BankExpense {
   id: string;
   bankId: string;             // FinanceItem.id (bank/fd/rd/mf/other)

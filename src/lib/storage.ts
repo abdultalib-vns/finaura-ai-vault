@@ -1,4 +1,4 @@
-import { FinanceItem, CardExpense, CardBill, CashbackEntry, RDInstallment, BankExpense, AIOptions, UserProfile, PaymentIntent, LoanEntry, EmiPayment } from "../types";
+import { FinanceItem, CardExpense, CardBill, CashbackEntry, RDInstallment, BankExpense, AIOptions, UserProfile, PaymentIntent, LoanEntry, EmiPayment, FDInterestEntry } from "../types";
 const ITEMS_KEY         = "finance_items";
 const PIN_HASH_KEY      = "finance_pin_hash";
 const CURRENCY_KEY      = "finance_currency";
@@ -16,6 +16,7 @@ const PAYMENT_INTENT_KEY = "finance_payment_intents";
 const PAY_RECORD_ENABLED_KEY = "finance_pay_record_enabled";
 const LOANS_KEY          = "finance_loans";
 const EMI_PAYMENTS_KEY   = "finance_emi_payments";
+const FD_INTEREST_KEY    = "finance_fd_interest";
 
 // ── Finance Items ────────────────────────────────────────────────
 export function saveItems(items: FinanceItem[]): void {
@@ -141,7 +142,7 @@ export function clearAll(): void {
    CASHBACKS_KEY, RD_INSTALL_KEY, BANK_EXPENSES_KEY,
    "finance_bio_cred_id", "finance_bio_enc_pin", "finance_bio_prf_salt",
    IDLE_TIMEOUT_KEY, THEME_KEY, SECURITY_Q_KEY, SECURITY_A_KEY, PAYMENT_INTENT_KEY,
-   LOANS_KEY, EMI_PAYMENTS_KEY]
+   LOANS_KEY, EMI_PAYMENTS_KEY, FD_INTEREST_KEY]
     .forEach((k) => localStorage.removeItem(k));
 }
 
@@ -303,4 +304,16 @@ export function loadEmiPayments(): EmiPayment[] {
 }
 export function getEmiPaymentsForLoan(loanId: string): EmiPayment[] {
   return loadEmiPayments().filter((p) => p.loanId === loanId);
+}
+
+// ── FD Interest Entries ───────────────────────────────────────────
+export function saveFDInterestEntries(entries: FDInterestEntry[]): void {
+  localStorage.setItem(FD_INTEREST_KEY, JSON.stringify(entries));
+}
+export function loadFDInterestEntries(): FDInterestEntry[] {
+  try { return JSON.parse(localStorage.getItem(FD_INTEREST_KEY) ?? "[]") as FDInterestEntry[]; }
+  catch { return []; }
+}
+export function getFDInterestEntriesForFD(fdId: string): FDInterestEntry[] {
+  return loadFDInterestEntries().filter((e) => e.fdId === fdId);
 }

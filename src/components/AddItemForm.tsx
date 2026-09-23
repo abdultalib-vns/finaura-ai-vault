@@ -58,7 +58,6 @@ export default function AddItemForm({
   const [lastFour, setLastFour]       = useState(initialValues?.lastFour ?? "");
   const [creditLimit, setCreditLimit] = useState(initialValues?.creditLimit !== undefined ? String(initialValues.creditLimit) : "");
   const [interestRate, setInterestRate] = useState(initialValues?.interestRate !== undefined ? String(initialValues.interestRate) : "");
-  const [interestInflow, setInterestInflow] = useState(initialValues?.interestInflow !== undefined ? String(initialValues.interestInflow) : "");
   const [startDate, setStartDate]     = useState(initialValues?.startDate ?? "");
   const [maturityDate, setMaturityDate] = useState(initialValues?.maturityDate ?? "");
   const [monthlyAmount, setMonthlyAmount] = useState(initialValues?.monthlyAmount !== undefined ? String(initialValues.monthlyAmount) : "");
@@ -91,7 +90,6 @@ export default function AddItemForm({
       createdAt: initialValues?.createdAt ?? Date.now(),
       creditLimit:    (type === "card" || type === "paylater") && creditLimit ? parseFloat(creditLimit) || undefined : undefined,
       interestRate:   (type === "fd" || type === "rd") && interestRate ? parseFloat(interestRate) || undefined : undefined,
-      interestInflow: type === "fd" && interestInflow ? parseFloat(interestInflow) || undefined : undefined,
       startDate:      (type === "fd" || type === "rd") ? startDate || undefined : undefined,
       maturityDate:   (type === "fd" || type === "rd") ? maturityDate || undefined : undefined,
       monthlyAmount:  type === "rd" && monthlyAmount ? parseFloat(monthlyAmount) || undefined : undefined,
@@ -108,7 +106,7 @@ export default function AddItemForm({
 
   function reset() {
     setType(initialType); setName(""); setBalance(""); setSecret("");
-    setLastFour(""); setCreditLimit(""); setInterestRate(""); setInterestInflow("");
+    setLastFour(""); setCreditLimit(""); setInterestRate("");
     setStartDate(""); setMaturityDate(""); setMonthlyAmount("");
     setInvestedAmount(""); setError(""); setOpen(false);
   }
@@ -246,18 +244,6 @@ export default function AddItemForm({
           <label>Interest Rate (% p.a.) <span className="label-badge">Optional</span></label>
           <input type="number" step="0.01" min="0" max="100" placeholder="e.g. 7.5"
             value={interestRate} onChange={(e) => setInterestRate(e.target.value)} />
-        </div>
-      )}
-
-      {/* Interest Inflow */}
-      {type === "fd" && (
-        <div className="form-group">
-          <label>Interest Inflow ({currency.code}) <span className="label-badge">Optional</span></label>
-          <input type="number" step="0.01" min="0" placeholder="e.g. 500.00"
-            value={interestInflow} onChange={(e) => setInterestInflow(e.target.value)} />
-          {interestInflow && !isNaN(parseFloat(interestInflow)) && (
-            <span className="input-hint">Accumulated interest added to principal</span>
-          )}
         </div>
       )}
 
