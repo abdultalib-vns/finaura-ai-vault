@@ -115,8 +115,13 @@ export default function FDDetail({ fd, currency, onBack, onInterestUpdate }: Pro
         </div>
         <div className="stat-divider" />
         <div className="stat-item">
+          <span className="stat-value cashback-val">{formatAmount(simpleInterest, currency)}</span>
+          <span className="stat-label">Est. Interest</span>
+        </div>
+        <div className="stat-divider" />
+        <div className="stat-item">
           <span className="stat-value cashback-val" style={{ color: "var(--success)" }}>+{formatAmount(actualEarnedInterest, currency)}</span>
-          <span className="stat-label">Earned Int.</span>
+          <span className="stat-label">Actual Earned</span>
         </div>
         <div className="stat-divider" />
         <div className="stat-item">
@@ -159,6 +164,7 @@ export default function FDDetail({ fd, currency, onBack, onInterestUpdate }: Pro
               {r > 0 && <tr><td>Interest Rate</td><td>{r}% p.a.</td></tr>}
               {years > 0 && <tr><td>Tenure</td><td>{years.toFixed(2)} years</td></tr>}
               {simpleInterest > 0 && <tr><td>Est. Total Interest</td><td>{formatAmount(simpleInterest, currency)}</td></tr>}
+              {actualEarnedInterest > 0 && <tr><td>Actual Earned Interest</td><td style={{ color: "var(--success)", fontWeight: 500 }}>+{formatAmount(actualEarnedInterest, currency)}</td></tr>}
               <tr className="fd-table-total"><td>Est. Maturity Amount</td><td>{formatAmount(maturityAmount, currency)}</td></tr>
             </tbody>
           </table>
