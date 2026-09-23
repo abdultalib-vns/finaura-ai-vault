@@ -172,14 +172,14 @@ export default function FDDetail({ fd, currency, onBack, onInterestUpdate }: Pro
           <form style={{ display: "flex", gap: "8px", marginBottom: "20px", alignItems: "center" }} onSubmit={handleAdd}>
             <input
               type="month"
-              style={{ flex: 1, minWidth: 0, padding: "12px 14px", borderRadius: "12px", border: "1px solid var(--border)", background: "rgba(0,0,0,0.2)", color: "var(--text)", outline: "none", fontSize: "14px", boxSizing: "border-box" }}
+              style={{ flex: 1, minWidth: 0, padding: "12px 14px", borderRadius: "12px", border: "1px solid var(--border)", background: "var(--surface2)", color: "var(--text)", outline: "none", fontSize: "14px", boxSizing: "border-box" }}
               value={month}
               onChange={(e) => setMonth(e.target.value)}
               required
             />
             <input
               type="number"
-              style={{ flex: 1, minWidth: 0, padding: "12px 14px", borderRadius: "12px", border: "1px solid var(--border)", background: "rgba(0,0,0,0.2)", color: "var(--text)", outline: "none", fontSize: "14px", boxSizing: "border-box" }}
+              style={{ flex: 1, minWidth: 0, padding: "12px 14px", borderRadius: "12px", border: "1px solid var(--border)", background: "var(--surface2)", color: "var(--text)", outline: "none", fontSize: "14px", boxSizing: "border-box" }}
               placeholder="Amount"
               step="0.01"
               min="0.01"
@@ -193,9 +193,9 @@ export default function FDDetail({ fd, currency, onBack, onInterestUpdate }: Pro
           </form>
 
           {entries.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "30px 10px", opacity: 0.6, background: "rgba(0,0,0,0.15)", borderRadius: "16px", border: "1px dashed rgba(255,255,255,0.1)" }}>
-              <Calendar size={28} style={{ marginBottom: "12px", opacity: 0.5 }} />
-              <p style={{ margin: 0, fontSize: "14px" }}>No interest logged yet.</p>
+            <div style={{ textAlign: "center", padding: "30px 10px", opacity: 0.8, background: "var(--surface2)", borderRadius: "16px", border: "1px dashed var(--border)" }}>
+              <Calendar size={28} style={{ marginBottom: "12px", opacity: 0.5, color: "var(--text)" }} />
+              <p style={{ margin: 0, fontSize: "14px", color: "var(--text)" }}>No interest logged yet.</p>
             </div>
           ) : (
             <ul className="rd-month-list" style={{ gap: "10px", display: "flex", flexDirection: "column", padding: 0, margin: 0, listStyle: "none" }}>
