@@ -1,10 +1,11 @@
 import { customAlert, customConfirm } from "../components/CustomAlert";
-import type { FinanceItem, CardExpense, CardBill, CashbackEntry, RDInstallment, BankExpense } from "../types";
+import type { FinanceItem, CardExpense, CardBill, CashbackEntry, RDInstallment, BankExpense, LoanEntry, EmiPayment } from "../types";
 import {
   loadItems, loadExpenses, loadBills, loadCashbacks, loadRDInstallments, loadBankExpenses,
   saveItems, saveExpenses, saveBills, saveCashbacks, saveRDInstallments, saveBankExpenses,
   loadPinHash,
   loadVeloAIUsage, saveVeloAIUsage,
+  loadLoans, saveLoans, loadEmiPayments, saveEmiPayments,
 } from "./storage";
 import { hashPin } from "./crypto";
 
@@ -18,6 +19,8 @@ export interface VaultBackup {
   rdInstallments: RDInstallment[];
   bankExpenses: BankExpense[];
   veloAIUsage?: { date: string, count: number };
+  loans?: LoanEntry[];
+  emiPayments?: EmiPayment[];
 }
 
 export function verifyPin(pin: string): boolean {
@@ -38,6 +41,8 @@ export async function exportVault(pin: string): Promise<void> {
     rdInstallments: loadRDInstallments(),
     bankExpenses: loadBankExpenses(),
     veloAIUsage: loadVeloAIUsage(),
+    loans: loadLoans(),
+    emiPayments: loadEmiPayments(),
   };
   const json = JSON.stringify(backup, null, 2);
   const date = new Date().toISOString().slice(0, 10);
@@ -97,6 +102,8 @@ export async function exportVaultDirect(): Promise<string> {
     rdInstallments: loadRDInstallments(),
     bankExpenses: loadBankExpenses(),
     veloAIUsage: loadVeloAIUsage(),
+    loans: loadLoans(),
+    emiPayments: loadEmiPayments(),
   };
   const json = JSON.stringify(backup, null, 2);
   const date = new Date().toISOString().slice(0, 10);
@@ -133,5 +140,7 @@ export async function importVault(file: File, pin: string): Promise<VaultBackup>
   if (Array.isArray(data.rdInstallments)) saveRDInstallments(data.rdInstallments);
   if (Array.isArray(data.bankExpenses)) saveBankExpenses(data.bankExpenses);
   if (data.veloAIUsage) saveVeloAIUsage(data.veloAIUsage);
+  if (Array.isArray(data.loans)) saveLoans(data.loans);
+  if (Array.isArray(data.emiPayments)) saveEmiPayments(data.emiPayments);
   return data;
 }

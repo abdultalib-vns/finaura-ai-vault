@@ -149,6 +149,8 @@ export interface LoanEntry {
   startDate: string;             // YYYY-MM
   notes?: string;
   createdAt: number;
+  cardId?: string;               // FinanceItem.id — links credit_card loan to a card
+  dueDay?: number;               // day-of-month for EMI due date (1–28, default 1)
 }
 
 export interface EmiPayment {

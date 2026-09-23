@@ -8,7 +8,8 @@ import {
   loadCurrency, saveCurrency, loadIdleTimeout, saveIdleTimeout,
   loadTheme, saveTheme, loadSecurityQuestion, saveSecurityQuestion,
   loadSecurityAnswerHash, saveSecurityAnswerHash,
-  loadUserProfile, saveUserProfile
+  loadUserProfile, saveUserProfile,
+  loadLoans, saveLoans, loadEmiPayments, saveEmiPayments
 } from "./storage";
 import { hashPin } from "./crypto";
 
@@ -29,6 +30,8 @@ export interface SyncPayload {
   pinHash?: string | null;
   securityQuestion?: number | null;
   securityAnswerHash?: string | null;
+  loans?: any[];
+  emiPayments?: any[];
 }
 
 // ── Verify PIN ──────────────────────────────────────────────────
@@ -56,7 +59,9 @@ export function generateSyncPayload(pin: string): string {
     theme: loadTheme(),
     pinHash: loadPinHash(),
     securityQuestion: loadSecurityQuestion(),
-    securityAnswerHash: loadSecurityAnswerHash()
+    securityAnswerHash: loadSecurityAnswerHash(),
+    loans: loadLoans(),
+    emiPayments: loadEmiPayments()
   };
 
   const json = JSON.stringify(payload);
@@ -148,6 +153,8 @@ export function importSyncPayload(encryptedData: string, pin: string): SyncPaylo
   if (Array.isArray(payload.cashbacks)) saveCashbacks(payload.cashbacks);
   if (Array.isArray(payload.rdInstallments)) saveRDInstallments(payload.rdInstallments);
   if (Array.isArray(payload.bankExpenses)) saveBankExpenses(payload.bankExpenses);
+  if (Array.isArray(payload.loans)) saveLoans(payload.loans);
+  if (Array.isArray(payload.emiPayments)) saveEmiPayments(payload.emiPayments);
   
   if (payload.veloAIUsage) saveVeloAIUsage(payload.veloAIUsage);
   if (payload.userProfile) saveUserProfile(payload.userProfile);

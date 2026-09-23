@@ -2,7 +2,7 @@ import { Search, Check, ArrowLeft, Ban, CheckCircle, Calendar, Receipt, CheckSqu
 import { useState, useMemo, useRef } from "react";
 import { FinanceItem, CardExpense, CardBill, ExpenseStatus } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
-import { saveExpenses, loadExpenses, saveBills, loadBills, saveCashbacks, loadCashbacks, saveItems } from "../lib/storage";
+import { saveExpenses, loadExpenses, saveBills, loadBills, saveCashbacks, loadCashbacks, saveItems, loadLoans, loadEmiPayments } from "../lib/storage";
 import { generateId } from "../lib/utils";
 import ExpenseForm from "./ExpenseForm";
 import BillPaymentSheet from "./BillPaymentSheet";
@@ -55,9 +55,42 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
   const allExpenses = loadExpenses();
   const allBills = loadBills();
 
-  const availableMonths = useMemo(() => getAvailableMonths(expenses), [expenses]);
+  const derivedEmis = useMemo(() => {
+    const loans = loadLoans().filter((l) => l.cardId === card.id);
+    const emiPayments = loadEmiPayments();
+    const result: (CardExpense & { isEmi: true })[] = [];
+    
+    loans.forEach(loan => {
+      const emis = emiPayments.filter(p => p.loanId === loan.id);
+      emis.forEach(emi => {
+        let dStr = new Date().toISOString().split("T")[0];
+        try {
+          const [monStr, yearStr] = emi.monthLabel.split(" ");
+          const mIdx = new Date(Date.parse(monStr + " 1, 2012")).getMonth() + 1;
+          const dayStr = String(loan.dueDay || 1).padStart(2, "0");
+          dStr = `${yearStr}-${String(mIdx).padStart(2, "0")}-${dayStr}`;
+        } catch {}
 
-  // ── Stats ──────────────────────────────────────────────────────
+        result.push({
+          id: `emi-${emi.id}`,
+          cardId: card.id,
+          description: `EMI: ${loan.name} (#${emi.monthIndex})`,
+          amount: emi.amount,
+          date: emi.paidDate || dStr,
+          status: emi.paid ? "paid" : "unpaid",
+          cashback: 0,
+          createdAt: Date.now(),
+          isEmi: true,
+        });
+      });
+    });
+    return result;
+  }, [card.id]);
+
+  const combinedExpenses = useMemo(() => [...expenses, ...derivedEmis], [expenses, derivedEmis]);
+  const availableMonths = useMemo(() => getAvailableMonths(combinedExpenses), [combinedExpenses]);
+
+  // ── Stats (Excluding EMIs to prevent double counting) ──────────
   const totalOutstanding = expenses
     .filter((e) => e.status === "unpaid" || e.status === "bill_generated_unpaid")
     .reduce((s, e) => s + e.amount, 0);
@@ -70,9 +103,9 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
   const unpaidExpenses = expenses.filter((e) => e.status === "unpaid");
   const hasUnpaid = unpaidExpenses.length > 0;
 
-  // ── Filtered list ──────────────────────────────────────────────
+  // ── Filtered list (Including EMIs) ─────────────────────────────
   const filtered = useMemo(() => {
-    let sorted = [...expenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    let sorted = [...combinedExpenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     if (selectedMonth !== "all") {
       sorted = sorted.filter((e) => getMonthKey(e.date) === selectedMonth);
     }
@@ -460,14 +493,14 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
               </div>
             ) : (
               <ul className="expense-list">
-                {filtered.map((exp) => {
+                {filtered.map((exp: any) => {
                   const si = statusInfo(exp.status);
-                  const isSelectable = selectMode && exp.status === "unpaid";
+                  const isSelectable = selectMode && exp.status === "unpaid" && !exp.isEmi;
                   const isSelected = selectedForBill.has(exp.id);
                   return (
                     <li
                       key={exp.id}
-                      className={`expense-item ${isSelectable ? "selectable" : ""} ${isSelected ? "selected" : ""}`}
+                      className={`expense-item ${isSelectable ? "selectable" : ""} ${isSelected ? "selected" : ""} ${exp.isEmi ? "is-emi-row" : ""}`}
                       onClick={isSelectable ? () => toggleSelect(exp.id) : undefined}
                     >
                       <div className="expense-item-top">
@@ -486,6 +519,7 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
                           {exp.cashback > 0 && (
                             <span className="expense-cashback">+{formatAmount(exp.cashback, currency)} CB</span>
                           )}
+                          {exp.isEmi && <span className="expense-cashback" style={{ color: "var(--primary)", borderColor: "var(--primary)", fontWeight: 600 }}>EMI</span>}
                         </div>
                       </div>
                       <div className="expense-item-bottom">
@@ -495,7 +529,7 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
                         >
                           {si.label}
                         </span>
-                        {!selectMode && (
+                        {!selectMode && !exp.isEmi && (
                           <div className="expense-item-actions">
                             {exp.status === "unpaid" && (
                               <button
@@ -517,6 +551,11 @@ export default function CardDetail({ card, currency, onBack, items, masterKey, o
                             >
                               Delete
                             </button>
+                          </div>
+                        )}
+                        {!selectMode && exp.isEmi && (
+                          <div className="expense-item-actions">
+                            <span style={{ fontSize: "0.75rem", color: "var(--text2)" }}>Manage in Loans</span>
                           </div>
                         )}
                       </div>

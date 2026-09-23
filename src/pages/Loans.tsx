@@ -175,6 +175,12 @@ export default function Loans({ currency, items }: Props) {
     const totalInterest = calculateTotalInterest(principal, rate, tenure);
     const taxAmount = formTaxes.reduce((s, t) => s + (totalInterest * t.percentage / 100), 0);
     const totalPayable = principal + totalInterest + taxAmount;
+    
+    let cardId: string | undefined;
+    if (activeTab === "credit_card") {
+      const matchedCard = items.find(i => i.name === formLender.trim() && (i.type === "card" || i.type === "paylater"));
+      if (matchedCard) cardId = matchedCard.id;
+    }
 
     if (editingLoan) {
       // Update existing
@@ -190,6 +196,7 @@ export default function Loans({ currency, items }: Props) {
         totalPayable,
         startDate: formStartDate,
         notes: formNotes.trim() || undefined,
+        cardId,
       } : l);
       persistLoans(updated);
     } else {
@@ -208,6 +215,7 @@ export default function Loans({ currency, items }: Props) {
         startDate: formStartDate,
         notes: formNotes.trim() || undefined,
         createdAt: Date.now(),
+        cardId,
       };
       persistLoans([loan, ...loans]);
 

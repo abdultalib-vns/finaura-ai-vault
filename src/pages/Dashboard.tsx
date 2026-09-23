@@ -2,7 +2,7 @@ import { LayoutDashboard, CreditCard, Building2, Check, LogOut, PieChart, AlignL
 import React, { useState, useEffect } from "react";
 import { FinanceItem } from "../types";
 import { Currency, formatAmount, formatCompactAmount } from "../lib/currency";
-import { saveItems, loadExpenses, saveExpenses, loadBankExpenses, saveBankExpenses, suppressDueReminder, isDueReminderSuppressed, loadPayAndRecordEnabled } from "../lib/storage";
+import { saveItems, loadExpenses, saveExpenses, loadBankExpenses, saveBankExpenses, suppressDueReminder, isDueReminderSuppressed, loadPayAndRecordEnabled, loadLoans, loadEmiPayments, saveEmiPayments } from "../lib/storage";
 import AddItemForm from "../components/AddItemForm";
 import ItemCard from "../components/ItemCard";
 import NotificationBell from "../components/NotificationBell";
@@ -818,6 +818,7 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
 
   // Upcoming Due Modal State
   const [upcomingDue, setUpcomingDue] = useState<{
+    type?: "card" | "emi";
     cardId: string;
     cardName: string;
     lastFour: string;
@@ -825,6 +826,8 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
     amount: number;
     daysLeft: number;
     expenseIdsStr?: string;
+    loanId?: string;
+    emiId?: string;
   } | null>(null);
   const [allUpcomingDues, setAllUpcomingDues] = useState<any[]>([]);
   const [showPaymentApps, setShowPaymentApps] = useState(false);
@@ -890,21 +893,93 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
       }
     });
 
+    const emiPayments = loadEmiPayments();
+    const loans = loadLoans();
+    const unpaidEmis = emiPayments.filter(p => !p.paid);
+
+    unpaidEmis.forEach(emi => {
+      const loan = loans.find(l => l.id === emi.loanId);
+      if (!loan) return;
+      
+      let dueMs = 0;
+      let dueDateStr = "";
+      try {
+        const [monStr, yearStr] = emi.monthLabel.split(" ");
+        const mIdx = new Date(Date.parse(monStr + " 1, 2012")).getMonth() + 1;
+        const dayStr = String(loan.dueDay || 1).padStart(2, "0");
+        dueDateStr = `${yearStr}-${String(mIdx).padStart(2, "0")}-${dayStr}`;
+        dueMs = new Date(dueDateStr).getTime();
+      } catch { return; }
+
+      const diffDays = Math.ceil((dueMs - todayMs) / (1000 * 60 * 60 * 24));
+      
+      if (diffDays <= 3) {
+        const expenseIdsStr = `emi_${emi.id}`;
+        const isSuppressed = isDueReminderSuppressed(loan.id, dueDateStr, expenseIdsStr);
+        let cardName = loan.name;
+        let lastFour = "";
+        
+        if (loan.type === "credit_card" && loan.cardId) {
+           const linkedCard = items.find(i => i.id === loan.cardId);
+           if (linkedCard) {
+             cardName = linkedCard.name;
+             lastFour = linkedCard.lastFour || "";
+           }
+        }
+
+        allDues.push({
+          type: "emi",
+          cardId: loan.id,
+          loanId: loan.id,
+          emiId: emi.id,
+          cardName: cardName,
+          lastFour: lastFour,
+          dueDate: dueDateStr,
+          amount: emi.amount,
+          expenseIdsStr,
+          daysLeft: diffDays,
+          isSuppressed
+        });
+
+        if (!isSuppressed && diffDays < minDays) {
+          minDays = diffDays;
+          mostUrgent = {
+            type: "emi",
+            cardId: loan.id,
+            loanId: loan.id,
+            emiId: emi.id,
+            cardName: cardName,
+            lastFour: lastFour,
+            dueDate: dueDateStr,
+            amount: emi.amount,
+            expenseIdsStr,
+            daysLeft: diffDays
+          };
+        }
+      }
+    });
+
     setUpcomingDue(mostUrgent);
     setAllUpcomingDues(allDues);
   }, [items, refreshKey]);
 
   function handleMarkPaid() {
     if (!upcomingDue) return;
-    const allExps = loadExpenses();
-    const updated = allExps.map(e => {
-      if (e.cardId === upcomingDue.cardId && e.dueDate === upcomingDue.dueDate) {
-        if (e.status === "bill_generated_unpaid") return { ...e, status: "bill_generated" as const };
-        if (e.status === "unpaid") return { ...e, status: "paid" as const };
-      }
-      return e;
-    });
-    saveExpenses(updated);
+    if (upcomingDue.type === "emi" && upcomingDue.emiId) {
+      const allEmis = loadEmiPayments();
+      const updated = allEmis.map(e => e.id === upcomingDue.emiId ? { ...e, paid: true, paidDate: new Date().toISOString().split("T")[0] } : e);
+      saveEmiPayments(updated);
+    } else {
+      const allExps = loadExpenses();
+      const updated = allExps.map(e => {
+        if (e.cardId === upcomingDue.cardId && e.dueDate === upcomingDue.dueDate) {
+          if (e.status === "bill_generated_unpaid") return { ...e, status: "bill_generated" as const };
+          if (e.status === "unpaid") return { ...e, status: "paid" as const };
+        }
+        return e;
+      });
+      saveExpenses(updated);
+    }
     setUpcomingDue(null);
     setRefreshKey(k => k + 1);
   }
@@ -1026,12 +1101,12 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
         <div className="modal-overlay" style={{ zIndex: 10000 }}>
           <div className="modal-sheet">
             <div className="modal-header">
-              <h3 className="form-title" style={{ color: "var(--danger)" }}><AlertTriangle size={20} /> Bill Due Reminder</h3>
+              <h3 className="form-title" style={{ color: "var(--danger)" }}><AlertTriangle size={20} /> {upcomingDue.type === "emi" ? "EMI Due Reminder" : "Bill Due Reminder"}</h3>
               <button className="modal-close" onClick={() => setUpcomingDue(null)}><X size={16} /></button>
             </div>
             <div className="form-group" style={{ textAlign: "center", padding: "10px 0" }}>
               <p style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>{upcomingDue.cardName}</p>
-              <p style={{ fontSize: "0.85rem", color: "var(--text2)", marginBottom: 16 }}>{upcomingDue.lastFour ? `•••• ${upcomingDue.lastFour}` : "•••• •••• ••••"}</p>
+              <p style={{ fontSize: "0.85rem", color: "var(--text2)", marginBottom: 16 }}>{upcomingDue.type === "emi" ? "Loan EMI" : (upcomingDue.lastFour ? `•••• ${upcomingDue.lastFour}` : "•••• •••• ••••")}</p>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--surface2)", padding: "12px 16px", borderRadius: "12px", marginBottom: "16px" }}>
                 <span style={{ fontSize: "0.9rem", color: "var(--text2)" }}>Amount Due</span>
                 <span style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--danger)" }}>{formatAmount(upcomingDue.amount, currency)}</span>
@@ -1063,8 +1138,8 @@ export default function Dashboard({ masterKey, currency, items, onItemsChange, o
               customNotifs={allUpcomingDues.map(d => ({
                 id: `due_${d.cardId}_${d.dueDate}`,
                 type: "warning",
-                title: "Bill Due Reminder",
-                message: `${d.cardName} (${d.lastFour ? "•••• " + d.lastFour : ""}) bill of ${formatAmount(d.amount, currency)} is ${d.daysLeft < 0 ? `overdue by ${Math.abs(d.daysLeft)} day(s)` : d.daysLeft === 0 ? "due today!" : `due in ${d.daysLeft} day(s)`}.`,
+                title: d.type === "emi" ? "EMI Due Reminder" : "Bill Due Reminder",
+                message: `${d.cardName} ${d.type === "emi" ? "EMI" : "(" + (d.lastFour ? "•••• " + d.lastFour : "") + ") bill"} of ${formatAmount(d.amount, currency)} is ${d.daysLeft < 0 ? `overdue by ${Math.abs(d.daysLeft)} day(s)` : d.daysLeft === 0 ? "due today!" : `due in ${d.daysLeft} day(s)`}.`,
                 ctaText: "Pay Now",
                 ctaAction: () => setShowPaymentApps(true)
               }))} 
