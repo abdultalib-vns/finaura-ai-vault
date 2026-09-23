@@ -19,7 +19,7 @@ import { AlertContainer, customAlert } from "./components/CustomAlert";
 import AdminApp from "./admin/AdminApp";
 import Lottie from "lottie-react";
 import aiAnimation from "../public/FinAura_AI_Lottie.json";
-import { loadItems, loadCurrency, loadIdleTimeout, loadTheme, saveTheme, loadPinHash, loadAIOptions, loadExpenses, loadLoans, loadEmiPayments, saveSessionToken, loadSessionToken, clearSessionToken } from "./lib/storage";
+import { loadItems, loadCurrency, loadIdleTimeout, loadTheme, saveTheme, loadPinHash, loadAIOptions, loadExpenses, loadLoans, loadEmiPayments } from "./lib/storage";
 import { encryptData, decryptData } from "./lib/crypto";
 import { getCurrency } from "./lib/currency";
 import { FinanceItem, NavTab, Currency } from "./types";
@@ -100,37 +100,6 @@ function MainApp() {
   const [pendingIntent, setPendingIntent] = useState<import("./types").PaymentIntent | null>(null);
   const aiOpts = loadAIOptions();
 
-  // Auto-restore persistent session if valid
-  useEffect(() => {
-    const session = loadSessionToken();
-    const pinHash = loadPinHash();
-    if (session && pinHash) {
-      const currentIdle = loadIdleTimeout();
-      if (currentIdle > 0) {
-        const timeoutMs = currentIdle * 60 * 1000;
-        if (Date.now() - session.timestamp > timeoutMs) {
-          // Expired
-          clearSessionToken();
-          return;
-        }
-      }
-      
-      const decryptedKey = decryptData(session.token, pinHash);
-      if (decryptedKey) {
-        // Temporarily bypass splash and welcome when auto-unlocking
-        setMasterKey(decryptedKey);
-        setItems(loadItems());
-        setCurrency(getCurrency(loadCurrency()));
-        setIdleMinutes(currentIdle);
-        const savedTheme = loadTheme();
-        setThemeState(savedTheme);
-        if (savedTheme === "dark") document.documentElement.classList.add("dark-mode");
-        else document.documentElement.classList.remove("dark-mode");
-        sessionIdRef.current = startSession();
-      }
-    }
-  }, []);
-
   const handleSplashDone = useCallback(() => setShowSplash(false), []);
 
   const checkPendingIntents = useCallback(() => {
@@ -193,11 +162,6 @@ function MainApp() {
     if (savedTheme === "dark") document.documentElement.classList.add("dark-mode");
     else document.documentElement.classList.remove("dark-mode");
 
-    const pinHash = loadPinHash();
-    if (pinHash) {
-      saveSessionToken(encryptData(key, pinHash));
-    }
-
     // Start analytics session
     sessionIdRef.current = startSession();
     // Show welcome setup for first-time users
@@ -210,7 +174,6 @@ function MainApp() {
   }
 
   function handleLock() {
-    clearSessionToken();
     if (sessionIdRef.current) {
       endSession(sessionIdRef.current);
       sessionIdRef.current = null;

@@ -141,8 +141,7 @@ export function clearAll(): void {
    CASHBACKS_KEY, RD_INSTALL_KEY, BANK_EXPENSES_KEY,
    "finance_bio_cred_id", "finance_bio_enc_pin", "finance_bio_prf_salt",
    IDLE_TIMEOUT_KEY, THEME_KEY, SECURITY_Q_KEY, SECURITY_A_KEY, PAYMENT_INTENT_KEY,
-   LOANS_KEY, EMI_PAYMENTS_KEY,
-   "finance_session_token", "finance_session_ts"]
+   LOANS_KEY, EMI_PAYMENTS_KEY]
     .forEach((k) => localStorage.removeItem(k));
 }
 
@@ -304,27 +303,4 @@ export function loadEmiPayments(): EmiPayment[] {
 }
 export function getEmiPaymentsForLoan(loanId: string): EmiPayment[] {
   return loadEmiPayments().filter((p) => p.loanId === loanId);
-}
-
-// ── Persistent Session ────────────────────────────────────────────
-const SESSION_TOKEN_KEY  = "finance_session_token";
-const SESSION_TS_KEY     = "finance_session_ts";
-
-export function saveSessionToken(encryptedKey: string): void {
-  localStorage.setItem(SESSION_TOKEN_KEY, encryptedKey);
-  localStorage.setItem(SESSION_TS_KEY, String(Date.now()));
-}
-
-export function loadSessionToken(): { token: string; timestamp: number } | null {
-  const token = localStorage.getItem(SESSION_TOKEN_KEY);
-  const ts = localStorage.getItem(SESSION_TS_KEY);
-  if (!token || !ts) return null;
-  const timestamp = parseInt(ts, 10);
-  if (!Number.isFinite(timestamp)) return null;
-  return { token, timestamp };
-}
-
-export function clearSessionToken(): void {
-  localStorage.removeItem(SESSION_TOKEN_KEY);
-  localStorage.removeItem(SESSION_TS_KEY);
 }
