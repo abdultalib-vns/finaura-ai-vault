@@ -462,7 +462,7 @@ export default function HelpGuideModal({ onClose }: Props) {
             <div className="help-footer-content">
               <h4 className="help-footer-title">Engineered by VeloLaunch</h4>
               <p className="help-footer-subtitle">
-                A Company by{" "}
+                A Division of{" "}
                 <a 
                   href="https://www.smartvistaitsolutions.in" 
                   target="_blank" 

@@ -110,7 +110,7 @@ export default function SplashScreen({ onFinish }: Props) {
             </a>
           </p>
           <p className="splash-footer-line">
-            A Company by{" "}
+            A Division of{" "}
             <a
               href="https://www.smartvistaitsolutions.in"
               target="_blank"

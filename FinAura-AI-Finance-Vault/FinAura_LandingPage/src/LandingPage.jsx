@@ -814,7 +814,7 @@ export default function LandingPage() {
 
           <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-white/40 text-xs">
-              Developed by Velo Launch <br /> A Company by Smart Vista IT Solutions
+              Developed by Velo Launch <br /> A Division of Smart Vista IT Solutions
             </p>
             <div className="flex gap-6 text-xs text-white/40">
               <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>

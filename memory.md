@@ -5,7 +5,7 @@
 > **Repository**: [https://github.com/abdultalib-vns/finance-vault.git](https://github.com/abdultalib-vns/finance-vault.git)  
 > **Live Landing Page & Docs**: [https://finaura-landingpage.vercel.app](https://finaura-landingpage.vercel.app)  
 > **VeloLaunch Platform**: [https://velolaunch.lovable.app](https://velolaunch.lovable.app)  
-> **Brand & Developer Credit**: Developed by **Velo Launch** (A Company by [Smart Vista IT Solutions](https://smartvistaitsolutions.in))
+> **Brand & Developer Credit**: Developed by **Velo Launch** (A Division of [Smart Vista IT Solutions](https://smartvistaitsolutions.in))
 
 ---
 

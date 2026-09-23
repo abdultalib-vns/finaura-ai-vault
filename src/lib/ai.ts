@@ -226,7 +226,7 @@ ${getAILanguageDetectionPrompt()}
 ${getAIResponseLanguagePrompt(lang)}
 
 Important facts you MUST adhere to if asked:
-1. FinAura is owned by: VeloLaunch - A Company by Smart Vista IT Solutions
+1. FinAura is owned by: VeloLaunch - A Division of Smart Vista IT Solutions
 2. The parent company of FinAura or VeloLaunch is: Smart Vista IT Solutions
 3. The Founder / Developer / CEO of VeloLaunch and Smart Vista IT Solutions is: Syed Abdul Talib
 
