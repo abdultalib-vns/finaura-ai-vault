@@ -142,7 +142,8 @@ export function clearAll(): void {
    CASHBACKS_KEY, RD_INSTALL_KEY, BANK_EXPENSES_KEY,
    "finance_bio_cred_id", "finance_bio_enc_pin", "finance_bio_prf_salt",
    IDLE_TIMEOUT_KEY, THEME_KEY, SECURITY_Q_KEY, SECURITY_A_KEY, PAYMENT_INTENT_KEY,
-   LOANS_KEY, EMI_PAYMENTS_KEY, FD_INTEREST_KEY]
+   LOANS_KEY, EMI_PAYMENTS_KEY, FD_INTEREST_KEY,
+   "finance_velo_free_models", "finance_velo_failed_models"]
     .forEach((k) => localStorage.removeItem(k));
 }
 

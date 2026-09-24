@@ -4,6 +4,7 @@ import { checkVeloAILimit, incrementVeloAIUsage } from "./storage";
 import { getVeloKey, getVeloModel } from "./veloCredentials";
 import { AI_TOOLS_SCHEMA } from "./ai-tools";
 import { AppLanguage, getAILanguageDetectionPrompt, getAIResponseLanguagePrompt } from "./i18n";
+import { getModelsToTry, markModelFailed } from "./freeModelRotator";
 
 export interface AIResponse {
   success: boolean;
@@ -152,11 +153,47 @@ async function callVeloAI(systemPrompt: string, inputMessages: {role: string, co
     throw new Error("VeloAI Daily Limit Reached (10/10). Please try again tomorrow or select a different AI provider in Settings.");
   }
   const k = getVeloKey();
-  const m = getVeloModel();
-  console.log("[VeloAI Debug] key length:", k.length, "model:", m);
-  const res = await callOpenRouter(k, m, systemPrompt, inputMessages, imageBase64);
-  incrementVeloAIUsage();
-  return res;
+  const defaultModel = getVeloModel();
+
+  // 1. Try the default hardcoded model first
+  try {
+    console.log("[VeloAI] Trying default model:", defaultModel);
+    const res = await callOpenRouter(k, defaultModel, systemPrompt, inputMessages, imageBase64);
+    incrementVeloAIUsage();
+    return res;
+  } catch (defaultErr: any) {
+    console.warn("[VeloAI] Default model failed:", defaultModel, defaultErr.message);
+    markModelFailed(defaultModel);
+  }
+
+  // 2. Auto-rotate through free models from OpenRouter
+  const freeModels = await getModelsToTry();
+  if (freeModels.length === 0) {
+    throw new Error("VeloAI: Default model failed and no free fallback models are available. Please check your connection or try again later.");
+  }
+
+  const errors: string[] = [];
+  for (const fm of freeModels) {
+    // Skip the default model since we already tried it
+    if (fm.id === defaultModel) continue;
+
+    try {
+      console.log("[VeloAI] Trying free model:", fm.id, fm.name);
+      const res = await callOpenRouter(k, fm.id, systemPrompt, inputMessages, imageBase64);
+      console.log("[VeloAI] ✓ Success with:", fm.id);
+      incrementVeloAIUsage();
+      return res;
+    } catch (err: any) {
+      console.warn("[VeloAI] ✗ Failed:", fm.id, err.message);
+      markModelFailed(fm.id);
+      errors.push(`${fm.id}: ${err.message}`);
+    }
+  }
+
+  // 3. All models exhausted
+  throw new Error(
+    `VeloAI: All free models failed. Tried ${errors.length + 1} models. Last error: ${errors[errors.length - 1] || "Unknown"}`
+  );
 }
 
 async function callAI(opts: AIOptions, systemPrompt: string, messages: {role: string, content: string}[], imageBase64?: string): Promise<string> {
