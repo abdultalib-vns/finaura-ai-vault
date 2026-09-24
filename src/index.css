@@ -7622,6 +7622,201 @@ html, body {
 @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
+/* ── VeloAI Redesigned UI ─────────────────────────────────────── */
+
+/* Empty state greeting */
+.velo-empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex: 1;
+  padding-bottom: 8px;
+}
+.velo-greeting {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 20px 0;
+  line-height: 1.4;
+}
+
+/* Vertical suggestion pills */
+.velo-suggestions-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.velo-suggestion-pill {
+  background: transparent;
+  border: 1.5px solid var(--accent, #8b5cf6);
+  border-radius: 24px;
+  padding: 12px 20px;
+  font-size: 0.93rem;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  white-space: normal;
+  line-height: 1.35;
+}
+.velo-suggestion-pill:hover {
+  background: var(--accent, #8b5cf6);
+  color: #ffffff;
+  transform: translateX(4px);
+}
+.velo-suggestion-pill:active {
+  transform: scale(0.97);
+}
+
+/* Thinking progress steps */
+.velo-thinking-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 16px 4px;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.velo-thinking-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  position: relative;
+  padding-bottom: 20px;
+}
+.velo-thinking-step:last-child {
+  padding-bottom: 0;
+}
+
+.velo-step-icon {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.velo-thinking-step.done .velo-step-icon {
+  color: var(--text);
+}
+
+.velo-step-pulse {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent, #8b5cf6);
+  animation: stepPulse 1.5s ease-in-out infinite;
+}
+@keyframes stepPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.7; }
+}
+
+/* Vertical connector line between steps */
+.velo-step-connector {
+  position: absolute;
+  left: 12px;
+  top: 26px;
+  bottom: 0;
+  width: 2px;
+  background: var(--text);
+  opacity: 0.3;
+}
+
+.velo-step-label {
+  font-size: 0.93rem;
+  color: var(--text2);
+  padding-top: 3px;
+  line-height: 1.4;
+}
+.velo-step-label.active-label {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Redesigned input area */
+.velo-input-area {
+  padding: 12px 16px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.velo-input-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 28px;
+  padding: 6px 8px 6px 18px;
+  transition: border-color 0.2s ease;
+}
+.velo-input-form:focus-within {
+  border-color: var(--accent, #8b5cf6);
+}
+.velo-chat-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  padding: 10px 0;
+  font-size: 0.95rem;
+  color: var(--text);
+  outline: none;
+}
+.velo-chat-input::placeholder {
+  color: var(--text3);
+}
+.velo-mic-btn {
+  background: transparent;
+  border: none;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: color 0.2s;
+}
+.velo-mic-btn:hover {
+  color: var(--accent, #8b5cf6);
+}
+.velo-send-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.velo-send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.velo-send-btn:not(:disabled):hover {
+  transform: scale(1.05);
+}
+
+/* Disclaimer below input */
+.velo-disclaimer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text3);
+  margin: 8px 0 0 0;
+  opacity: 0.8;
+}
+
 :root.dark-mode .bottom-nav,
 .dark-mode .bottom-nav { 
   background: #000000 !important; 
