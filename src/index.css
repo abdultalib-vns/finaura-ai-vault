@@ -13563,97 +13563,114 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 }
 
 /* ═══════════════════════════════════════════
-   Mini Calculator Overlay
+   Mini Calculator – Floating Draggable Widget
    ═══════════════════════════════════════════ */
-.calc-overlay {
+.calc-floating {
   position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  animation: calcFadeIn 0.25s ease;
-}
-@keyframes calcFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-.calc-container {
-  width: 320px;
+  z-index: 9998;
+  width: 300px;
   max-width: 92vw;
-  border-radius: 24px;
+  border-radius: 20px;
   overflow: hidden;
   background: var(--surface);
   box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.25),
+    0 16px 48px rgba(0, 0, 0, 0.22),
     0 0 0 1px rgba(255, 255, 255, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  animation: calcSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: calcPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  touch-action: none;
+  transition: width 0.25s ease, border-radius 0.25s ease;
 }
-@keyframes calcSlideUp {
-  from { opacity: 0; transform: translateY(40px) scale(0.95); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+.calc-floating.calc-compact {
+  width: 220px;
+  border-radius: 16px;
+}
+@keyframes calcPopIn {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
-.calc-header {
+/* Drag handle header */
+.calc-drag-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 18px 10px;
+  padding: 8px 10px 6px 12px;
+  cursor: grab;
   border-bottom: 1px solid var(--border);
+  user-select: none;
+  touch-action: none;
 }
-.calc-header-title {
-  font-size: 0.95rem;
+.calc-drag-header:active { cursor: grabbing; }
+
+.calc-drag-grip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text3);
+}
+.calc-drag-grip .calc-header-title {
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--text);
   letter-spacing: 0.02em;
 }
-.calc-close-btn {
+.calc-compact .calc-drag-grip .calc-header-title {
+  font-size: 0.72rem;
+}
+
+.calc-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.calc-header-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
   border: none;
   background: var(--surface2);
   color: var(--text2);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
-.calc-close-btn:hover {
+.calc-header-btn:hover { background: var(--border); }
+.calc-header-btn:active { transform: scale(0.9); }
+.calc-header-btn-close:hover {
   background: var(--danger);
   color: white;
 }
-.calc-close-btn:active { transform: scale(0.9); }
 
 /* Display */
 .calc-display {
-  padding: 16px 20px 14px;
+  padding: 14px 16px 12px;
   text-align: right;
   background: linear-gradient(
     135deg,
     var(--header-gradient-start) 0%,
     var(--header-gradient-end) 100%
   );
-  min-height: 100px;
+  min-height: 80px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
 }
+.calc-display-compact {
+  padding: 8px 12px 6px;
+  min-height: 44px;
+}
 .calc-history {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.55);
   font-weight: 500;
   min-height: 1.2em;
   letter-spacing: 0.03em;
 }
 .calc-result {
-  font-size: 2.8rem;
+  font-size: 2.4rem;
   font-weight: 700;
   color: #ffffff;
   line-height: 1.15;
@@ -13667,14 +13684,18 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 .calc-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding: 12px;
+  gap: 6px;
+  padding: 8px;
+}
+.calc-grid-compact {
+  gap: 4px;
+  padding: 6px;
 }
 .calc-btn {
-  height: 56px;
+  height: 48px;
   border: none;
-  border-radius: 14px;
-  font-size: 1.2rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -13684,6 +13705,11 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
   font-family: "Inter", system-ui, sans-serif;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+}
+.calc-compact .calc-btn {
+  height: 36px;
+  border-radius: 9px;
+  font-size: 0.9rem;
 }
 .calc-btn:active {
   transform: scale(0.92);
@@ -13722,7 +13748,10 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 .calc-btn-op {
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   color: var(--accent);
-  font-size: 1.35rem;
+  font-size: 1.2rem;
+}
+.calc-compact .calc-btn-op {
+  font-size: 1rem;
 }
 .calc-btn-op:hover {
   background: color-mix(in srgb, var(--accent) 22%, var(--surface));
@@ -13741,8 +13770,11 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
     var(--header-gradient-end)
   );
   color: white;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+.calc-compact .calc-btn-eq {
+  font-size: 1rem;
 }
 .calc-btn-eq:hover {
   box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
@@ -13750,9 +13782,9 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 }
 
 /* Dark mode refinements */
-:root.dark-mode .calc-container {
+:root.dark-mode .calc-floating {
   box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.6),
+    0 16px 48px rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(255, 255, 255, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }

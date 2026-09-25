@@ -1,4 +1,5 @@
 import { Construction, Sparkles } from "lucide-react";
+import MiniCalculator from "./components/MiniCalculator";
 import { useEffect, useRef, useState, useCallback } from "react";
 import AuthScreen from "./pages/AuthScreen";
 import Dashboard from "./pages/Dashboard";
@@ -95,6 +96,7 @@ function MainApp() {
   const initialConfigVersion = useRef(globalConfig.configVersion || 1);
   const [targetCardId, setTargetCardId] = useState<string | null>(null);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(false);
   const [showHelpGuide, setShowHelpGuide] = useState(false);
   const [showDailyBackupPrompt, setShowDailyBackupPrompt] = useState(false);
   const [pendingIntent, setPendingIntent] = useState<import("./types").PaymentIntent | null>(null);
@@ -374,7 +376,7 @@ function MainApp() {
             <Dashboard masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onLock={handleLock} />
           )}
           {tab === "cards" && (
-            <Cards masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onReload={handleReload} targetCardId={targetCardId} />
+            <Cards masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onReload={handleReload} targetCardId={targetCardId} onToggleCalculator={() => setShowCalculator(v => !v)} />
           )}
           {tab === "banks" && (
             <Banks masterKey={masterKey} currency={currency} items={items} onItemsChange={setItems} onReload={handleReload} />
@@ -445,6 +447,9 @@ function MainApp() {
             onClose={() => setShowAIAssistant(false)}
             onDataChanged={() => setItems(loadItems())}
           />
+        )}
+        {showCalculator && (
+          <MiniCalculator onClose={() => setShowCalculator(false)} />
         )}
         {showHelpGuide && (
           <HelpGuideModal onClose={() => setShowHelpGuide(false)} />

@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { CreditCard, Gift, ArrowRight, CheckCircle, Calendar, ChevronLeft, ChevronRight, AlertTriangle, X, Coins, Receipt, Sparkles, Building2, TrendingUp, RefreshCw, ClipboardList, Gem, Star, EyeOff, Eye, Pin, Hourglass, CheckCircle2, Plus, Calculator } from "lucide-react";
-import MiniCalculator from "../components/MiniCalculator";
 import { FinanceItem, CardExpense, ExpenseStatus, PaymentApp } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
 import { loadExpenses, saveExpenses, saveItems, saveCashbacks, loadCashbacks, loadPayAndRecordEnabled } from "../lib/storage";
@@ -20,6 +19,7 @@ interface Props {
   onItemsChange: (items: FinanceItem[]) => void;
   onReload?: () => void;
   targetCardId?: string | null;
+  onToggleCalculator?: () => void;
 }
 
 type SubTab = "balance" | "expenses" | "newcard";
@@ -28,14 +28,13 @@ const MASK = "••••••";
 
 
 
-export default function Cards({ masterKey, currency, items, onItemsChange, onReload, targetCardId }: Props) {
+export default function Cards({ masterKey, currency, items, onItemsChange, onReload, targetCardId, onToggleCalculator }: Props) {
   const [subTab, setSubTab] = useState<SubTab>("balance");
   const [selectedCard, setSelectedCard] = useState<FinanceItem | null>(null);
   const [editItem, setEditItem] = useState<FinanceItem | null>(null);
   const [showAmounts, setShowAmounts] = useState(false);
   const [showPaymentApps, setShowPaymentApps] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [showCalculator, setShowCalculator] = useState(false);
   const payRecordEnabled = loadPayAndRecordEnabled();
 
   useEffect(() => {
@@ -79,7 +78,7 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
             <button
               type="button"
               className="reveal-toggle"
-              onClick={() => setShowCalculator(true)}
+              onClick={() => onToggleCalculator?.()}
               title="Calculator"
               style={{ fontSize: "1.2rem" }}
             >
@@ -168,10 +167,6 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
 
       {showCalendar && (
         <CalendarModal cards={cardItems} onClose={() => setShowCalendar(false)} />
-      )}
-
-      {showCalculator && (
-        <MiniCalculator onClose={() => setShowCalculator(false)} />
       )}
     </div>
   );
