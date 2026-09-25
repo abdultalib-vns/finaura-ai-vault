@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { CreditCard, Gift, ArrowRight, CheckCircle, Calendar, ChevronLeft, ChevronRight, AlertTriangle, X, Coins, Receipt, Sparkles, Building2, TrendingUp, RefreshCw, ClipboardList, Gem, Star, EyeOff, Eye, Pin, Hourglass, CheckCircle2, Plus } from "lucide-react";
+import { CreditCard, Gift, ArrowRight, CheckCircle, Calendar, ChevronLeft, ChevronRight, AlertTriangle, X, Coins, Receipt, Sparkles, Building2, TrendingUp, RefreshCw, ClipboardList, Gem, Star, EyeOff, Eye, Pin, Hourglass, CheckCircle2, Plus, Calculator } from "lucide-react";
+import MiniCalculator from "../components/MiniCalculator";
 import { FinanceItem, CardExpense, ExpenseStatus, PaymentApp } from "../types";
 import { Currency, formatAmount } from "../lib/currency";
 import { loadExpenses, saveExpenses, saveItems, saveCashbacks, loadCashbacks, loadPayAndRecordEnabled } from "../lib/storage";
@@ -34,6 +35,7 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
   const [showAmounts, setShowAmounts] = useState(false);
   const [showPaymentApps, setShowPaymentApps] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(false);
   const payRecordEnabled = loadPayAndRecordEnabled();
 
   useEffect(() => {
@@ -74,6 +76,15 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
         <div className="page-header-row">
           <h2 className="header-title">Cards</h2>
           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <button
+              type="button"
+              className="reveal-toggle"
+              onClick={() => setShowCalculator(true)}
+              title="Calculator"
+              style={{ fontSize: "1.2rem" }}
+            >
+              <Calculator size={16} />
+            </button>
             <button
               type="button"
               className="reveal-toggle"
@@ -157,6 +168,10 @@ export default function Cards({ masterKey, currency, items, onItemsChange, onRel
 
       {showCalendar && (
         <CalendarModal cards={cardItems} onClose={() => setShowCalendar(false)} />
+      )}
+
+      {showCalculator && (
+        <MiniCalculator onClose={() => setShowCalculator(false)} />
       )}
     </div>
   );
