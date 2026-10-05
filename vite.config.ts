@@ -60,28 +60,28 @@ export default defineConfig({
             short_name: "Savings",
             description: "View Total Savings & Outstanding Dues",
             url: basePath + "?widget=savings",
-            icons: [{ src: basePath + "icon-192.png", sizes: "192x192" }]
+            icons: [{ src: basePath + "icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" }]
           },
           {
             name: "Upcoming Bills Widget",
             short_name: "Upcoming",
             description: "View Upcoming Credit Card & Loan dues",
             url: basePath + "?widget=upcoming",
-            icons: [{ src: basePath + "icon-192.png", sizes: "192x192" }]
+            icons: [{ src: basePath + "icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" }]
           },
           {
             name: "1-Click Backup",
             short_name: "Backup",
             description: "Backup your vault securely",
             url: basePath + "?widget=backup",
-            icons: [{ src: basePath + "icon-192.png", sizes: "192x192" }]
+            icons: [{ src: basePath + "icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" }]
           },
           {
             name: "Pay & Auto-Record",
             short_name: "Pay",
             description: "Open Pay & Auto-Record scanner",
             url: basePath + "?widget=pay",
-            icons: [{ src: basePath + "icon-192.png", sizes: "192x192" }]
+            icons: [{ src: basePath + "icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" }]
           }
         ]
       },
