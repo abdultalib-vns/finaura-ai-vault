@@ -119,30 +119,30 @@ export default function MiniCalculator({ onClose }: Props) {
   };
 
   const buttons: { label: string; type: "num" | "op" | "fn" | "eq" | "del"; action: () => void }[] = [
-    { label: "C",  type: "fn",  action: clear },
-    { label: "±",  type: "fn",  action: negate },
-    { label: "%",  type: "fn",  action: percent },
-    { label: "÷",  type: "op",  action: () => chooseOp("÷") },
+    { label: "C", type: "fn", action: clear },
+    { label: "±", type: "fn", action: negate },
+    { label: "%", type: "fn", action: percent },
+    { label: "÷", type: "op", action: () => chooseOp("÷") },
 
-    { label: "7",  type: "num", action: () => append("7") },
-    { label: "8",  type: "num", action: () => append("8") },
-    { label: "9",  type: "num", action: () => append("9") },
-    { label: "×",  type: "op",  action: () => chooseOp("×") },
+    { label: "7", type: "num", action: () => append("7") },
+    { label: "8", type: "num", action: () => append("8") },
+    { label: "9", type: "num", action: () => append("9") },
+    { label: "×", type: "op", action: () => chooseOp("×") },
 
-    { label: "4",  type: "num", action: () => append("4") },
-    { label: "5",  type: "num", action: () => append("5") },
-    { label: "6",  type: "num", action: () => append("6") },
-    { label: "−",  type: "op",  action: () => chooseOp("−") },
+    { label: "4", type: "num", action: () => append("4") },
+    { label: "5", type: "num", action: () => append("5") },
+    { label: "6", type: "num", action: () => append("6") },
+    { label: "−", type: "op", action: () => chooseOp("−") },
 
-    { label: "1",  type: "num", action: () => append("1") },
-    { label: "2",  type: "num", action: () => append("2") },
-    { label: "3",  type: "num", action: () => append("3") },
-    { label: "+",  type: "op",  action: () => chooseOp("+") },
+    { label: "1", type: "num", action: () => append("1") },
+    { label: "2", type: "num", action: () => append("2") },
+    { label: "3", type: "num", action: () => append("3") },
+    { label: "+", type: "op", action: () => chooseOp("+") },
 
-    { label: "0",  type: "num", action: () => append("0") },
-    { label: ".",  type: "num", action: () => append(".") },
-    { label: "⌫",  type: "del", action: backspace },
-    { label: "=",  type: "eq",  action: equals },
+    { label: "0", type: "num", action: () => append("0") },
+    { label: ".", type: "num", action: () => append(".") },
+    { label: "⌫", type: "del", action: backspace },
+    { label: "=", type: "eq", action: equals },
   ];
 
   const isCompact = size === "compact";

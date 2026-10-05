@@ -13866,3 +13866,103 @@ svg.lucide { color: inherit; stroke: currentColor; display: inline-block; vertic
 :root.dark-mode .notif-clear-all-btn:hover {
   background: rgba(239, 68, 68, 0.15);
 }
+
+/* ═══════════════════════════════════════════
+   PWA Widgets Overlay
+   ═══════════════════════════════════════════ */
+.pwa-widget-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000; /* above everything */
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: widgetFadeIn 0.25s ease-out forwards;
+}
+
+@keyframes widgetFadeIn {
+  from { opacity: 0; backdrop-filter: blur(0px); }
+  to { opacity: 1; backdrop-filter: blur(8px); }
+}
+
+.pwa-widget-card {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 24px;
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 24px 48px rgba(0,0,0,0.2);
+  animation: widgetSlideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes widgetSlideUp {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.pwa-widget-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.2);
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.pwa-widget-close:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.pwa-widget-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.pwa-widget-header h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.pwa-widget-section {
+  margin-bottom: 20px;
+}
+.pwa-widget-label {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  font-weight: 500;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.pwa-widget-value {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.pwa-widget-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.pwa-widget-subbox {
+  padding: 16px;
+  border-radius: 16px;
+}
+.pwa-widget-subval {
+  font-size: 1.3rem;
+  font-weight: 700;
+}

@@ -18,6 +18,7 @@ import WelcomeSetup, { isOnboardingDone } from "./components/WelcomeSetup";
 import AIAssistant from "./components/AIAssistant";
 import { AlertContainer, customAlert } from "./components/CustomAlert";
 import AdminApp from "./admin/AdminApp";
+import PWAWidgetsManager from "./components/PWAWidgetsManager";
 import Lottie from "lottie-react";
 import aiAnimation from "../public/FinAura_AI_Lottie.json";
 import { loadItems, loadCurrency, loadIdleTimeout, loadTheme, saveTheme, loadPinHash, loadAIOptions, loadExpenses, loadLoans, loadEmiPayments } from "./lib/storage";
@@ -469,6 +470,12 @@ function MainApp() {
             }} 
           />
         )}
+        <PWAWidgetsManager 
+          masterKey={masterKey} 
+          currency={currency} 
+          items={items} 
+          onRequireBackup={() => setShowDailyBackupPrompt(true)} 
+        />
       </div>
     </div>
   );
