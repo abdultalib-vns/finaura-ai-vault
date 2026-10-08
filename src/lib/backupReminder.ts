@@ -150,11 +150,13 @@ export async function sendBackupNotification(isTest: boolean = false): Promise<b
     : "It's time for your daily vault backup! Tap to secure and export your data now.";
 
   const targetUrl = new URL("/?action=daily_backup&t=" + Date.now(), window.location.origin).href;
+  const baseUrl = import.meta.env.BASE_URL || "/";
+  const iconUrl = new URL(`${baseUrl}icon-192.png`.replace(/\/\//g, "/"), window.location.origin).href;
 
   const options: NotificationOptions = {
     body,
-    icon: "/icon-192.png",
-    badge: "/icon-192.png",
+    icon: iconUrl,
+    badge: iconUrl,
     tag: NOTIFICATION_TAG,
     requireInteraction: true,
     data: {
