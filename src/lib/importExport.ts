@@ -6,8 +6,10 @@ import {
   loadPinHash,
   loadVeloAIUsage, saveVeloAIUsage,
   loadLoans, saveLoans, loadEmiPayments, saveEmiPayments,
+  loadFDInterestEntries, saveFDInterestEntries,
 } from "./storage";
 import { hashPin } from "./crypto";
+import type { FDInterestEntry } from "../types";
 
 export interface VaultBackup {
   version: 1;
@@ -21,6 +23,7 @@ export interface VaultBackup {
   veloAIUsage?: { date: string, count: number };
   loans?: LoanEntry[];
   emiPayments?: EmiPayment[];
+  fdInterestEntries?: FDInterestEntry[];
 }
 
 export function verifyPin(pin: string): boolean {
@@ -43,6 +46,7 @@ export async function exportVault(pin: string): Promise<void> {
     veloAIUsage: loadVeloAIUsage(),
     loans: loadLoans(),
     emiPayments: loadEmiPayments(),
+    fdInterestEntries: loadFDInterestEntries(),
   };
   const json = JSON.stringify(backup, null, 2);
   const date = new Date().toISOString().slice(0, 10);
@@ -104,6 +108,7 @@ export async function exportVaultDirect(): Promise<string> {
     veloAIUsage: loadVeloAIUsage(),
     loans: loadLoans(),
     emiPayments: loadEmiPayments(),
+    fdInterestEntries: loadFDInterestEntries(),
   };
   const json = JSON.stringify(backup, null, 2);
   const date = new Date().toISOString().slice(0, 10);
@@ -142,5 +147,6 @@ export async function importVault(file: File, pin: string): Promise<VaultBackup>
   if (data.veloAIUsage) saveVeloAIUsage(data.veloAIUsage);
   if (Array.isArray(data.loans)) saveLoans(data.loans);
   if (Array.isArray(data.emiPayments)) saveEmiPayments(data.emiPayments);
+  if (Array.isArray(data.fdInterestEntries)) saveFDInterestEntries(data.fdInterestEntries);
   return data;
 }
